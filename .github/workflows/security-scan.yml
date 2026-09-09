@@ -3,9 +3,9 @@ name: Static Code & Secret Scanning
 
 on:
   push:
-    branches: [ "main" ,"shrey_branch"]
+    branches: [ "main" ,"shrey_branch","**"]
   pull_request:
-    branches: [ "main" ,"shrey_branch" ]
+    branches: [ "main" ,"shrey_branch","**" ]
 
 jobs:
   gitleaks:
