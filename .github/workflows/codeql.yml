@@ -2,9 +2,10 @@ name: "CodeQL"
 
 on:
   push:
-    branches: [ "main", "security-vulnerability-demo" ]
+    branches: ["main", "security-vulnerability-demo"]
+
   pull_request:
-    branches: [ "main", "security-vulnerability-demo" ]
+    branches: ["main", "security-vulnerability-demo"]
 
 permissions:
   actions: read
@@ -20,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python' ]
+        language: ["python"]
 
     steps:
       - name: Checkout repository
@@ -30,6 +31,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          queries: security-extended
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
