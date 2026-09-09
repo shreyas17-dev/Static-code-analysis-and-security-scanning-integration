@@ -1,3 +1,5 @@
+# Intentional vulnerability for CodeQL demonstration
+
 import subprocess
 
 def run_command(user_input):
