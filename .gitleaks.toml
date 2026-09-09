@@ -1,0 +1,15 @@
+# .gitleaks.toml
+# Owner: Person 2 (Security Engineer)
+# Config for Gitleaks secret scanner. Extends the default rule set
+# (github-pat, generic-api-key, aws-access-token, etc.) with project-specific tuning.
+
+title = "Team Project Gitleaks Config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Ignore known test fixtures if ever added"
+paths = [
+  '''tests/fixtures/.*''',
+]
