@@ -1,14 +1,9 @@
-import sqlite3
+import os
 
 
-def lookup_user(username):
-    connection = sqlite3.connect(":memory:")
-    query = "SELECT * FROM users WHERE username = '" + username + "';"
-    result = connection.execute(query).fetchall()
-    connection.close()
-    return result
+def run_command(user_input):
+    os.system(user_input)
 
 
-if __name__ == "__main__":
-    username = input("Enter username: ")
-    print(lookup_user(username))
+user_input = input("Enter command: ")
+run_command(user_input)
