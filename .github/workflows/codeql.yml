@@ -1,11 +1,10 @@
 name: "CodeQL"
 
 on:
- push:
-  branches: [ "main", "security-vulnerability-demo" ]
-
-pull_request:
-  branches: [ "main", "security-vulnerability-demo" ]
+  push:
+    branches: [ "main", "security-vulnerability-demo" ]
+  pull_request:
+    branches: [ "main", "security-vulnerability-demo" ]
 
 permissions:
   actions: read
