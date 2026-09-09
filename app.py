@@ -1,3 +1,4 @@
+# Security scan demonstration
 import subprocess
 
 def run_command(user_input):
