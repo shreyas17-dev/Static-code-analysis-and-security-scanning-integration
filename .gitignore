@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# pytest
+.pytest_cache/
+
+# Gitleaks report produced by local scans
+results.sarif
+
+# Local environment file - never commit real secrets
+.env

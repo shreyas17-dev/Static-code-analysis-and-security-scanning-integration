@@ -1,0 +1,28 @@
+# Gitleaks configuration for the Secure Code Scanner project (KAN-7).
+#
+# Gitleaks scans code for hardcoded secrets. This file tells it which rules
+# to use. It is referenced explicitly by .github/workflows/security.yml
+# through the GITLEAKS_CONFIG environment variable.
+
+title = "Secure Code Scanner - Gitleaks configuration"
+
+# Start from the full ruleset that Gitleaks ships with. That covers AWS keys,
+# GitHub tokens, Slack tokens, Stripe keys, private keys and generic
+# high-entropy API keys, among many others.
+[extend]
+useDefault = true
+
+# Project-specific rule.
+#
+# The built-in "generic-api-key" rule ignores any value containing a word such
+# as "demo", "fake", "test" or "example", which is sensible for real projects
+# but makes a teaching demonstration fragile. This rule matches on the shape of
+# the assignment instead of the entropy of the value, so the deliberate
+# credential in auth.py is reported no matter what placeholder string is used.
+[[rules]]
+id = "hardcoded-scanner-api-key"
+description = "SCANNER_API_KEY assigned a hardcoded string literal"
+regex = '''SCANNER_API_KEY\s*=\s*["'][A-Za-z0-9_\-]{12,}["']'''
+keywords = ["scanner_api_key"]
+# Only source files, so documentation may describe the problem in prose.
+path = '''\.py$'''

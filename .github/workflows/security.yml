@@ -1,0 +1,63 @@
+# Secure Code Scanner - CI pipeline (KAN-8)
+#
+# Two independent gates run on every push and every pull request:
+#   1. "Application tests"  - pytest, checks the code is correct.
+#   2. "Secret scan"        - Gitleaks, checks no credential is hardcoded.
+# A failure in either gate turns the whole workflow run red.
+
+name: Security
+
+on:
+  push:
+  pull_request:
+
+# Least privilege: jobs may read the repository and nothing else unless a
+# job asks for more.
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Application tests (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        run: pytest -v
+
+  secret-scan:
+    name: Secret scan (Gitleaks)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Lets Gitleaks comment on the pull request line that leaked.
+      pull-requests: write
+    steps:
+      - name: Check out the repository with full history
+        uses: actions/checkout@v6
+        with:
+          # Gitleaks scans commits, so it needs more than the latest one.
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v3
+        env:
+          # Supplied automatically by GitHub. Gitleaks uses it to list the
+          # commits in a pull request and to post its findings there.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use the ruleset defined at the root of this repository.
+          GITLEAKS_CONFIG: .gitleaks.toml
+          # No GITLEAKS_LICENSE is set: it is only required for repositories
+          # owned by a GitHub organisation, not by a personal account.
