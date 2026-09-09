@@ -1,0 +1,6 @@
+# .bandit
+# Owner: Person 2 (Security Engineer)
+# Config for Bandit static analysis. Bandit config files use YAML syntax.
+exclude_dirs:
+  - tests
+  - .git
