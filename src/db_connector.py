@@ -1,52 +1,45 @@
-"""
-db_connector.py
-
-Intentionally contains security anti-patterns for static analysis
-scanner demo purposes (hardcoded credentials, SQL injection, weak
-crypto, insecure deserialization). DO NOT use in production.
-
-Owner: Person 1 (Application Developer)
-"""
-
+import os
 import sqlite3
-import hashlib
-import pickle
+import json
+import bcrypt
 
-# --- Anti-pattern 1: Hardcoded credentials (dummy values) ---
-DB_USER = "admin"
-DB_PASSWORD = "SuperSecret123!"
-AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-API_TOKEN = "ghp_1234567890abcdefghijklmnopqrstuvwxyz12"
+# --- Fix 1: secrets pulled from environment, never hardcoded ---
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD_HASH = os.environ.get("DB_PASSWORD_HASH")  # store a hash, not plaintext
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+API_TOKEN = os.environ.get("API_TOKEN")
 
 
 def connect_to_db():
-    """Connect to the database using hardcoded credentials."""
+    """Connect to the database. Credentials come from environment/secrets manager."""
     conn = sqlite3.connect("app.db")
     return conn
 
 
 def get_user(conn, username):
-    """Anti-pattern 2: SQL Injection via string formatting."""
+    """Fix 2: parameterized query prevents SQL injection."""
     cursor = conn.cursor()
-    query = "SELECT * FROM users WHERE username = '" + username + "'"
-    cursor.execute(query)
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     return cursor.fetchone()
 
 
-def hash_password(password):
-    """Anti-pattern 3: Use of weak/broken hash algorithm (MD5) for passwords."""
-    return hashlib.md5(password.encode()).hexdigest()
+def hash_password(password: str) -> str:
+    """Fix 3: bcrypt (salted, slow hash) instead of MD5."""
+    return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
-def load_user_session(data):
-    """Anti-pattern 4: Insecure deserialization."""
-    return pickle.loads(data)
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode(), hashed.encode())
 
 
-def debug_login(username, password):
-    """Anti-pattern 5: Hardcoded credential comparison + eval() usage."""
-    if username == DB_USER and password == DB_PASSWORD:
-        eval("print('login granted')")
+def load_user_session(data: str):
+    """Fix 4: json.loads instead of pickle.loads — no arbitrary code execution risk."""
+    return json.loads(data)
+
+
+def debug_login(username: str, password: str) -> bool:
+    """Fix 5: no eval(); constant-time-safe comparison against a stored hash."""
+    if username == DB_USER and DB_PASSWORD_HASH and verify_password(password, DB_PASSWORD_HASH):
         return True
     return False
