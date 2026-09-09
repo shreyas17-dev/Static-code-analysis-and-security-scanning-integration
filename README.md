@@ -3,12 +3,12 @@ Owner: Person 4 (Docs / QA Lead) — compiled from all members' work
 
 ## Team & Responsibilities
 
-| Member | Role | Deliverables |
-|---|---|---|
-| 1 | Application Developer | `src/db_connector.py` (vulnerable), `src/db_connector_fixed.py` (patched) |
-| 2 | Security Engineer | `.gitleaks.toml`, `.bandit`, `docs/security-scan-demo.md` (failing scan) |
-| 3 | DevOps / CI Engineer | `.github/workflows/security-scan.yml`, `requirements.txt`, `tests/` |
-| 4 | Docs / QA Lead | This README, final report, verifying the passing scan |
+| Member | Deliverables |
+|---|---|
+| 1 |`src/db_connector.py` (vulnerable), `src/db_connector_fixed.py` (patched) |
+| 2 | `.gitleaks.toml`, `.bandit`, `docs/security-scan-demo.md` (failing scan) |
+| 3 | `.github/workflows/security-scan.yml`, `requirements.txt`, `tests/` |
+| 4 | This README, final report, verifying the passing scan |
 
 ## Repo layout
 ```
